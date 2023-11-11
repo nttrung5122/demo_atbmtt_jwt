@@ -1,0 +1,17 @@
+extend layout/layout
+
+block content
+    .wrapper
+        form#login-form( onsubmit='return false' )
+            h1 Đăng nhập
+            .alter-text
+                | Chưa có tài khoản
+                a(href='register.html')  Đăng ký
+            .input-box
+                label.form-label Username:
+                input(type='text' placeholder='Nhập vào username' name='username')
+            .input-box
+                label.form-label Mật khẩu:
+                input(type='password' placeholder='Nhập vào mật khẩu' name='password')
+            button.lg-button(type='submit') Đăng nhập
+    script(src="/dist/js/login.js")

@@ -3,9 +3,11 @@ const jwt = require("jsonwebtoken");
 const  authMiddleware = {
 
     verifyToken: (req, res, next) => {
-        const token = req.headers.token;
-        if(token){
-            const accessToken = token.split(" ")[1];
+        const [bearerToken, accessToken] = req.headers.authorization.split(" ");
+        // console.log(accessToken);
+        if (bearerToken !== "Bearer")
+            return res.status(401).json("not authenticated");
+        if(accessToken){
             jwt.verify(accessToken, process.env.accessKey,(err,payload) => {
                 if(err){
                     return res.status(403).json(err);

@@ -1,36 +1,22 @@
-const User = require('../models/User');
+const User = require('../models/User.model');
+const ListToken = require('../models/ListToken.model');
 const bcrypt = require('bcrypt');
 const jwt = require("jsonwebtoken");
+const jwtService = require("../services/jwt.service");
+// const RedisService = require("../services/redis.service");
+const Redis = require("ioredis");
+const client = new Redis();
 
+
+// const blackListToken=[];
 const authController = {
-
-    generateAccessToken:(data)=>{
-        return jwt.sign(
-            data,
-            process.env.accessKey,
-            {
-                expiresIn:process.env.accessTokenLife,
-                // algorithm:process.env.jwtAlgorithm
-            }
-        )
-    },
-    generateRefreshToken:(data)=>{
-        return jwt.sign(
-            data,
-            process.env.refreshKey,
-            {
-                expiresIn:process.env.refreshTokenLife,
-                // algorithm:process.env.jwtAlgorithm
-            }
-        )
-    },
 
     registerUser: async (req,res)=> {
         try {
             const salt = await bcrypt.genSalt(10);
             const hash = await bcrypt.hash(req.body.password,salt);
             
-            const newUser = await new User({
+            const newUser = new User({
                 username: req.body.username,
                 email: req.body.email,
                 password: hash,
@@ -45,64 +31,107 @@ const authController = {
     },
 
     logIn: async (req, res) => {
+        // return res.status(200).json(req.body.password);
         try {
             const user = await User.findOne({username: req.body.username});
 
             if(!user){
-                res.status(404).json("wrong username");
+                return res.status(404).json("wrong username");
             }
             const validPassword = await bcrypt.compare( req.body.password,user.password);
 
             if(!validPassword){
-                res.status(404).json("wrong password");
+                return res.status(404).json("wrong password");
             }
             if(user && validPassword){
-                const {password,refreshKey, ...others} = user._doc
-                const accessToken = authController.generateAccessToken(others);
-                const refreshToken = authController.generateRefreshToken(others);
+                const {password,refreshKey, ...others} = user._doc;
+                const {accessToken, refreshToken} = jwtService.generate(others);
+                // const token = new ListToken({ 
+                //     token: refreshToken
+                // })
+                // await token.save();
+                // console.log(accessToken, refreshToken);
+                // await User.updateOne({username:req.body.username},{
+                //     refreshKey:refreshToken
+                // });
                 res.cookie("refreshToken",refreshToken,{
                     httpOnly: true,
-                    secure: false,
+                    secure: false, // true when deloying
                     sameSite:"strict",
                 })
-                user.refreshKey= refreshToken;
-                await user.save();
-                res.status(200).json({others,accessToken});
+
+                return res.status(200).json({
+                    user:others,
+                    accessToken: accessToken
+                });
                 // res.status(200).json({others});
             }
 
         } catch (error) {
-            res.status(500).json(error);
+            console.log(error);
+            return res.status(500).json(error);
         }
     },
     refreshToken:async (req, res) => {
-        const refreshToken = req.cookies.refreshToken;
+        const refreshTokenOld = req.cookies.refreshToken;
         // console.log(req.cookies.refreshToken);
-        if(!refreshToken){
+        
+        if(!refreshTokenOld){
             return res.status(401).json("not authorized");
         }
 
-        jwt.verify(refreshToken,process.env.refreshKey,async (err, userInfo) => {
+        jwt.verify(refreshTokenOld,process.env.refreshKey,async (err, userInfo) => {
             if(err){
                 return res.status(500).json(err);
-            }            
-            const user = await User.findOne({username: userInfo.username});
-            if(user.refreshKey !== refreshToken){
-                return res.status(403).json("token invalid");
             }
-            const {password,refreshKey, ...others} = user._doc
+            
+            //luu bang redis
+            const checkRefreshToken = await client.get(refreshTokenOld);
+            // console.log(checkRefreshToken);
+            if (checkRefreshToken) 
+                return res.status(401).json("Refresh token was already used");
+            // await RedisService.set({
+            //     key: refreshToken,
+            //     value: true,
+            //     timeType: "EX",
+            //     time: parseInt(process.env.refreshTokenLifeInRedis, 10),
+            //   });
 
-            const newAccessToken = authController.generateAccessToken(others);
-            const newRefeshToken = authController.generateRefreshToken(others);
 
-            user.refreshToken = newRefeshToken;
-            user.save();
-            res.cookie("refreshToken",newRefeshToken,{
+            //luu bang mongodb
+            // const value = await ListToken.findOne({token:refreshTokenOld});
+            // console.log(value);
+            // if(!value){
+            //     return res.status(401).json("Refresh token was already used");
+            // }
+            // await ListToken.deleteOne({token:refreshTokenOld});
+
+            const {exp,iat, ...data} = userInfo;
+            const {accessToken, refreshToken} = jwtService.generate(data);
+
+            await client.set(refreshTokenOld,"1");
+            const test = await client.get(refreshTokenOld);
+            // console.log(test);
+
+            // await User.updateOne({username:userInfo.username},{
+            //     refreshKey:refreshToken
+            // });
+            // const token = new ListToken({ 
+            //     token: refreshToken
+            // })
+            // await token.save();
+
+
+            // if(blackListToken.includes(refreshTokenOld))
+            //     return res.status(401).json("Refresh token was already used");
+            
+            // blackListToken.push(refreshToken);
+            res.cookie("refreshToken",refreshToken,{
                 httpOnly: true,
-                secure: false,
+                secure: false, // true when deloying
                 sameSite:"strict",
             });
-            res.status(200).json({accessToken:newAccessToken});
+            res.status(200).json({accessToken:accessToken});
         })
     },
     logOut: async (req, res) => {
@@ -116,7 +145,7 @@ const authController = {
             user.refreshToken = null;
             await user.save();
         });
-        res.status(200).json("Logout: ...");
+        return res.status(200).json("Logout: ...");
     }
 }
 
