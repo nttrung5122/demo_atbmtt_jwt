@@ -28,6 +28,10 @@ const userSchema = new mongoose.Schema({
         type: String,
         default:"user"
     },
+    listNote: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Note"
+    }]
     
 },
 {timestamps:true}

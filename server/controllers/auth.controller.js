@@ -1,5 +1,5 @@
 const User = require('../models/User.model');
-const ListToken = require('../models/ListToken.model');
+const ListToken = require('../models/Note.model');
 const bcrypt = require('bcrypt');
 const jwt = require("jsonwebtoken");
 const jwtService = require("../services/jwt.service");
@@ -56,8 +56,9 @@ const authController = {
                 // });
                 res.cookie("refreshToken",refreshToken,{
                     httpOnly: true,
-                    secure: false, // true when deloying
+                    secure: process.env.NODE_ENV === "production",
                     sameSite:"strict",
+                    maxAge: 60 * 60*24 * 1000
                 })
 
                 return res.status(200).json({
@@ -74,17 +75,15 @@ const authController = {
     },
     refreshToken:async (req, res) => {
         const refreshTokenOld = req.cookies.refreshToken;
-        // console.log(req.cookies.refreshToken);
         
         if(!refreshTokenOld){
-            return res.status(401).json("not authorized");
+            return res.status(401).json("not authorized1");
         }
 
-        jwt.verify(refreshTokenOld,process.env.refreshKey,async (err, userInfo) => {
+        jwtService.verifyRefreshToken(refreshTokenOld,async (err, userInfo) => {
             if(err){
                 return res.status(500).json(err);
             }
-            
             //luu bang redis
             const checkRefreshToken = await client.get(refreshTokenOld);
             // console.log(checkRefreshToken);
@@ -128,8 +127,9 @@ const authController = {
             // blackListToken.push(refreshToken);
             res.cookie("refreshToken",refreshToken,{
                 httpOnly: true,
-                secure: false, // true when deloying
+                secure: process.env.NODE_ENV === "production",
                 sameSite:"strict",
+                maxAge: 60 * 60*24 * 1000
             });
             res.status(200).json({accessToken:accessToken});
         })

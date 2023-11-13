@@ -1,4 +1,5 @@
-const jwt = require("jsonwebtoken");
+
+const jwtService = require("../services/jwt.service");
 
 const  authMiddleware = {
 
@@ -8,12 +9,14 @@ const  authMiddleware = {
         if (bearerToken !== "Bearer")
             return res.status(401).json("not authenticated");
         if(accessToken){
-            jwt.verify(accessToken, process.env.accessKey,(err,payload) => {
+            jwtService.verifyAccessToken(accessToken,(err,payload) => {
                 if(err){
                     return res.status(403).json(err);
                 }
                 req.user = payload;
                 next();
+                // return res.status(403).json(payload);
+
             });
         }else{
             return res.status(401).json("not authenticated");
