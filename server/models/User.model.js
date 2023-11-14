@@ -20,10 +20,6 @@ const userSchema = new mongoose.Schema({
         required: true,
         minLenght: 8,
     },
-    refreshKey:{
-        type: String,
-        default:null,
-    },
     type:{
         type: String,
         default:"user"

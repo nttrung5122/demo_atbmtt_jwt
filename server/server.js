@@ -2,18 +2,22 @@ const express = require("express");
 const dotenv = require("dotenv");
 const cors = require("cors");
 const mongoose = require("mongoose");
-// const { MongoClient, ServerApiVersion } = require('mongodb');
 const cookieParser = require("cookie-parser"); 
 const bodyParser = require('body-parser');
 const router = require("./routes/router");
+const helmet = require('helmet');
 
 module.exports = {
-    start() {
-        const app = express();
-
+	async start() {
+		const app = express();
+		
         dotenv.config();
 
-        mongoose.connect(process.env.mongoDB);
+		const urimongodb = process.env.mongoDB;
+    
+    	await mongoose.connect(urimongodb).then(()=>{
+        	console.log("connect to data ",urimongodb);
+		});
 
         
         // app.use(bodyParser.urlencoded({ extended: false }));
@@ -22,7 +26,6 @@ module.exports = {
         app.use(cookieParser());
         app.use(express.json());
         // cài đặt bảo mật cho ứng dụng
-        var helmet = require('helmet');
         app.use(helmet())
         app.use(
             helmet.contentSecurityPolicy({
@@ -45,9 +48,9 @@ module.exports = {
         app.use("/",router)
 
 
-        app.set('view engine', 'pug');
-        app.set('views', './views');
-        app.use(express.static(__dirname + '/public'))
+        // app.set('view engine', 'pug');
+        // app.set('views', './views');
+        // app.use(express.static(__dirname + '/public'))
 
 
         // start listen serve
