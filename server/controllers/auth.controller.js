@@ -1,5 +1,5 @@
-const User = require('../models/User.model');
-const ListToken = require('../models/Note.model');
+const User = require('../models/user.model');
+const ListToken = require('../models/note.model');
 const bcrypt = require('bcrypt');
 const jwt = require("jsonwebtoken");
 const jwtService = require("../services/jwt.service");
@@ -45,7 +45,7 @@ const authController = {
                 return res.status(404).json("wrong password");
             }
             if(user && validPassword){
-                const {password,refreshKey, ...others} = user._doc;
+                const {password,refreshKey,listNote,listFolder, ...others} = user._doc;
                 const {accessToken, refreshToken} = jwtService.generate(others);
                 // const token = new ListToken({ 
                 //     token: refreshToken

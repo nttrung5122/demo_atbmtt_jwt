@@ -27,6 +27,10 @@ const userSchema = new mongoose.Schema({
     listNote: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: "Note"
+    }],
+    listFolder: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Note Folder"
     }]
     
 },

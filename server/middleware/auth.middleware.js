@@ -5,7 +5,7 @@ const  authMiddleware = {
 
     verifyToken: (req, res, next) => {
         try {
-            const [bearerToken, accessToken] = req.headers?.authorization.split(" ");
+            const [bearerToken, accessToken] = req.headers?.authorization?.split(" ");
             // console.log(accessToken);
             if (bearerToken !== "Bearer")
                 return res.status(401).json("not authenticated");

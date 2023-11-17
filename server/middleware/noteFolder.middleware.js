@@ -1,12 +1,10 @@
-
 const User = require("../models/user.model");
 
-const noteMiddleware = {
-    verifyOwnerNote:async (req, res, next) =>{
+const noteFolderMiddleware = {
+    verifyOwnerFolder:async (req, res, next) =>{
         try {
             const user = await User.findById(req.user._id);
-            // console.log(user.listNote.includes(req.params.idNote));
-            if(!user.listNote.includes(req.params.idNote)){
+            if(!user.listFolder.includes(req.params.idFolder)){
                 return res.status(406).json("you are not owner")
             }
             next();
@@ -17,4 +15,4 @@ const noteMiddleware = {
     }
 }
 
-module.exports = noteMiddleware;
+module.exports = noteFolderMiddleware;
