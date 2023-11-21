@@ -1,0 +1,95 @@
+body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  margin: 0; /* Remove default margin */
+}
+.auth-form-container {
+  box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+  width: 500px; /* Fixed width */
+  padding: 30px 40px;
+  box-sizing: border-box; /* So padding doesn't add to width */
+  text-align: center;
+
+  font-weight: 400;
+}
+
+.auth-form-container, .login-form, .register-form{
+  display: flex;
+  flex-direction: column;
+ 
+}
+
+.rg-success{
+  box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+  width: 500px;
+  padding: 30px 40px;
+  text-align: center;
+}
+
+
+label {
+  text-align: left;
+  padding: 0.25rem 0;
+}
+input {
+  margin: 0.5rem 0;
+  background-color: #f5f8fa;
+  border-color:#f5f8fa ;
+  color: #5e6278;
+  border-radius: 5px;
+  outline: none;
+  border: none;
+  padding: 10px;
+}
+.form-button {
+  width: 100%;
+  margin-top: 30px;
+  background-color: #009ef7;
+  color: white;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  display: block;
+  font-size: 1.05rem;
+  text-align: center;
+  height: 45px;
+  border-radius: 5px;
+  margin-bottom: 50px;
+  font-weight: 500;
+}
+.form-button:hover {
+  /* color: #000; */
+  
+  border-color: #2a2a2a;
+}
+
+.link-btn {
+  background: none;
+  color:#009ef7;
+  text-decoration: underline;
+}
+.link-btn:hover{
+  background-color: white;
+}
+
+.errorMsg {
+  text-align: left;
+  color: red;
+  /* background-color: #; */
+  padding: 4px;
+  display: none;
+}
+input:invalid[focused="true"]{
+  border: 1px solid red;
+}
+
+input:invalid[focused="true"] ~ span{
+  display: block;
+}
+.error{
+  text-align: left;
+  color: red;
+  font-weight: 400;
+}

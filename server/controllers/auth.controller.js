@@ -37,12 +37,12 @@ const authController = {
             const user = await User.findOne({username: req.body.username});
 
             if(!user){
-                return res.status(404).json("wrong username");
+                return res.status(401).json("wrong username");
             }
             const validPassword = await bcrypt.compare( req.body.password,user.password);
 
             if(!validPassword){
-                return res.status(404).json("wrong password");
+                return res.status(401).json("wrong password");
             }
             if(user && validPassword){
                 const {password,refreshKey,listNote,listFolder, ...others} = user._doc;
@@ -143,7 +143,6 @@ const authController = {
                 return res.status(500).json(err);
             }            
             const user = await User.findOne({username: userInfo.username});
-            user.refreshToken = null;
             await user.save();
         });
         return res.status(200).json("Logout: ...");

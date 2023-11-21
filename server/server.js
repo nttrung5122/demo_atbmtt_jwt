@@ -23,6 +23,7 @@ module.exports = {
         // app.use(bodyParser.urlencoded({ extended: false }));
         // app.use(bodyParser.json())
         app.use(cors());
+        
         app.use(cookieParser());
         app.use(express.json());
         // cài đặt bảo mật cho ứng dụng

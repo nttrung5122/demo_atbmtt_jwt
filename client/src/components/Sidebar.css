@@ -1,0 +1,167 @@
+
+.Sidebar {
+    width: 250px;
+    height: 100%;
+    position: fixed; 
+    z-index: 1;
+    top: 0; 
+    left: 0;
+    /* background-color: grey;  */
+    overflow-x: hidden;
+    padding-top: 20px; 
+    border-right: 1px solid rgb(222, 226, 230) ;
+    border-right-width: 1px;
+    border-right-style: solid;
+
+    background-color: #f0f0f0;
+    
+  }
+
+  .logout {
+    position: absolute;
+    padding: 2.5rem;
+    width: 100%;
+    bottom: 0;
+    left: 15px;
+
+  }
+  .logout button{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .first-row {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    border-bottom: 1px solid black;
+    padding: 0;
+  }
+  .first-row button {
+    width: 50px;
+  }
+  /* Sidebar content */
+  
+  .Sidebar a {
+  
+    padding: 6px 8px 6px 16px;
+  
+    text-decoration: none;
+  
+    font-size: 18px;
+  
+    color: #818181;
+  
+    display: inline-block;
+  
+    transition: 0.3s;
+    
+  }
+  
+  /* Links on mouse-over */
+  
+  .Sidebar a:hover {
+  
+    color: #f1f1f1;
+  
+  }
+  
+  /* Main content */
+  
+  .main-content {
+  
+    margin-left: 260px; /* Same as Sidebar's width + 10px space */
+  
+    padding: 15px;
+  
+    /* Your other styling properties */
+  
+  }
+  
+  
+
+  .Logo img{
+    width: 50px;
+    height: 50px;
+    display: grid;
+    place-items: center;
+    margin-right: 10px;
+  }
+  .Logo{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.5em;
+    margin-top: 16px;
+    margin-bottom: 24px;
+   
+  }
+
+  .welcome {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 15px;
+    color: #818181;
+    font-weight: 400;
+  }
+
+ul {
+  list-style: none;
+  padding: 0;
+}  
+
+.folder:active{
+  background-color: #ffc972;
+}
+.folder:hover{
+  background-color: #fff;
+}
+.folder-icon{
+  margin-right: 1rem;
+}
+.folder label{
+  padding: 0;
+}
+
+.folder {
+
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+  padding: 5px 10px;
+
+  position: relative; /* Set the li position to relative */
+
+}
+
+
+.folder-name {
+
+  /* Your styles for folder name */
+
+  flex: 1;
+
+  margin-left: 10px;
+
+}
+
+.folder {
+
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+  position: relative; /* Ensures dropdown is positioned relative to this element */
+
+  padding: 5px 10px;
+
+  border-bottom: 1px solid #ddd; /* Add a border to separate items */
+
+}
