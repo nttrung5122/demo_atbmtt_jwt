@@ -15,7 +15,7 @@ const noteFolderController = {
             const user = await User.findById(req.user._id);
             user.listFolder.push(folder._id);
             await user.save();
-
+            folder.title = cryptoJsService.decrypt(folder.title);
             res.status(200).json(folder);
         } catch (error) {
             res.status(500).json(error);

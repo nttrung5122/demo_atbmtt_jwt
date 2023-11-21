@@ -18,6 +18,9 @@ const noteController={
             user.listNote.push(note._id);
             await user.save();
 
+            note.title = cryptoJsService.decrypt(note.title);
+            note.content = cryptoJsService.decrypt(note.content);
+            
             res.status(200).json(note);
 
         }catch(err){
