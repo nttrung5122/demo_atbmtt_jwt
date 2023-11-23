@@ -56,9 +56,9 @@ const authController = {
                 //     refreshKey:refreshToken
                 // });
                 res.cookie("refreshToken",refreshToken,{
-                    httpOnly: true,
-                    secure: process.env.NODE_ENV === "production",
-                    sameSite:"strict",
+                    httpOnly: false,
+                    secure: true,
+                    sameSite:"None",
                     maxAge: 60 * 60*24 * 1000
                 })
 
@@ -75,8 +75,8 @@ const authController = {
         }
     },
     refreshToken:async (req, res) => {
-        const refreshTokenOld = req.cookies.refreshToken;
-        
+        const refreshTokenOld = req?.cookies?.refreshToken;
+
         if(!refreshTokenOld){
             return res.status(401).json("not authorized1");
         }
@@ -127,24 +127,18 @@ const authController = {
             
             // blackListToken.push(refreshToken);
             res.cookie("refreshToken",refreshToken,{
-                httpOnly: true,
-                secure: process.env.NODE_ENV === "production",
-                sameSite:"strict",
+                httpOnly: false,
+                secure: true,
+                sameSite:"None",
                 maxAge: 60 * 60*24 * 1000
             });
             res.status(200).json({accessToken:accessToken});
         })
     },
     logOut: async (req, res) => {
-        res.clearCookie("refreshToken");
         const refreshToken = req.cookies.refreshToken;
-        jwt.verify(refreshToken,process.env.refreshKey,async (err, userInfo) => {
-            if(err){
-                return res.status(500).json(err);
-            }            
-            const user = await User.findOne({username: userInfo.username});
-            await user.save();
-        });
+        res.clearCookie("refreshToken");
+        await client.set(refreshToken,"1");
         return res.status(200).json("Logout: ...");
     }
 }

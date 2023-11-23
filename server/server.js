@@ -22,29 +22,44 @@ module.exports = {
         
         // app.use(bodyParser.urlencoded({ extended: false }));
         // app.use(bodyParser.json())
-        app.use(cors());
+        app.use(cors( {
+
+          origin: 'http://localhost:3000', // specify the origin, not '*'
+        
+          credentials: true, // this allows the server to accept requests with credentials (cookies, HTTP auth)
+        
+        }));
         
         app.use(cookieParser());
         app.use(express.json());
         // cài đặt bảo mật cho ứng dụng
-        app.use(helmet())
-        app.use(
-            helmet.contentSecurityPolicy({
-              directives: {
-                'default-src': ["'self'"],
-                'base-uri': ["'self'"],
-                'block-all-mixed-content': [],
-                'font-src': ["'self'", 'https:', 'data:'],
-                'frame-ancestors': ["'self'"],
-                'img-src': ["'self'", 'data:'],
-                'object-src': ["'none'"],
-                'script-src': ["'self'"],
-                'script-src-attr': ["'none'"],
-                'style-src': ["'self'", ' https:'],
-                'upgrade-insecure-requests': [],
-              },
-            })
+        // app.use(helmet())
+        // app.use(
+        //     helmet.contentSecurityPolicy({
+        //       directives: {
+        //         'default-src': ["'self'"],
+        //         'base-uri': ["'self'"],
+        //         'block-all-mixed-content': [],
+        //         'font-src': ["'self'", 'https:', 'data:'],
+        //         'frame-ancestors': ["'self'"],
+        //         'img-src': ["'self'", 'data:'],
+        //         'object-src': ["'none'"],
+        //         'script-src': ["'self'"],
+        //         'script-src-attr': ["'none'"],
+        //         'style-src': ["'self'", ' https:'],
+        //         'upgrade-insecure-requests': [],
+        //       },
+        //     })
+        //   )
+        app.use(function(req, res, next) {
+          res.header('Content-Type', 'application/json;charset=UTF-8')
+          res.header('Access-Control-Allow-Credentials', true)
+          res.header(
+            'Access-Control-Allow-Headers',
+            'Origin, X-Requested-With, Content-Type, Accept'
           )
+          next()
+        })
         // add route
         app.use("/",router)
 
