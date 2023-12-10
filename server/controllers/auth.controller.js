@@ -6,8 +6,6 @@ const jwtService = require("../services/jwt.service");
 // const RedisService = require("../services/redis.service");
 const Redis = require("ioredis");
 const client = new Redis();
-
-
 // const blackListToken=[];
 const authController = {
 
@@ -15,7 +13,6 @@ const authController = {
         try {
             const salt = await bcrypt.genSalt(10);
             const hash = await bcrypt.hash(req.body.password,salt);
-            
             const newUser = new User({
                 username: req.body.username,
                 email: req.body.email,
@@ -56,7 +53,7 @@ const authController = {
                 //     refreshKey:refreshToken
                 // });
                 res.cookie("refreshToken",refreshToken,{
-                    httpOnly: false,
+                    httpOnly: true,
                     secure: true,
                     sameSite:"None",
                     maxAge: 60 * 60*24 * 1000
@@ -76,14 +73,14 @@ const authController = {
     },
     refreshToken:async (req, res) => {
         const refreshTokenOld = req?.cookies?.refreshToken;
-
+        // console.log(refreshTokenOld);
         if(!refreshTokenOld){
             return res.status(401).json("not authorized1");
         }
 
         jwtService.verifyRefreshToken(refreshTokenOld,async (err, userInfo) => {
             if(err){
-                return res.status(500).json(err);
+                return res.status(401).json(err);
             }
             //luu bang redis
             const checkRefreshToken = await client.get(refreshTokenOld);
@@ -127,7 +124,7 @@ const authController = {
             
             // blackListToken.push(refreshToken);
             res.cookie("refreshToken",refreshToken,{
-                httpOnly: false,
+                httpOnly: true,
                 secure: true,
                 sameSite:"None",
                 maxAge: 60 * 60*24 * 1000
@@ -136,9 +133,10 @@ const authController = {
         })
     },
     logOut: async (req, res) => {
-        const refreshToken = req.cookies.refreshToken;
-        res.clearCookie("refreshToken");
-        await client.set(refreshToken,"1");
+        res.clearCookie("refreshToken",{
+            sameSite:"None",
+            secure: true,
+        });
         return res.status(200).json("Logout: ...");
     }
 }
