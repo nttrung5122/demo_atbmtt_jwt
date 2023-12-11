@@ -55,6 +55,8 @@ const authController = {
                 res.cookie("refreshToken",refreshToken,{
                     httpOnly: true,
                     secure: true,
+                    // httpOnly: false, // test api
+                    // secure: false,
                     sameSite:"None",
                     maxAge: 60 * 60*24 * 1000
                 })
@@ -87,45 +89,17 @@ const authController = {
             // console.log(checkRefreshToken);
             if (checkRefreshToken) 
                 return res.status(401).json("Refresh token was already used");
-            // await RedisService.set({
-            //     key: refreshToken,
-            //     value: true,
-            //     timeType: "EX",
-            //     time: parseInt(process.env.refreshTokenLifeInRedis, 10),
-            //   });
-
-
-            //luu bang mongodb
-            // const value = await ListToken.findOne({token:refreshTokenOld});
-            // console.log(value);
-            // if(!value){
-            //     return res.status(401).json("Refresh token was already used");
-            // }
-            // await ListToken.deleteOne({token:refreshTokenOld});
 
             const {exp,iat, ...data} = userInfo;
             const {accessToken, refreshToken} = jwtService.generate(data);
 
             await client.set(refreshTokenOld,"1");
             const test = await client.get(refreshTokenOld);
-            // console.log(test);
-
-            // await User.updateOne({username:userInfo.username},{
-            //     refreshKey:refreshToken
-            // });
-            // const token = new ListToken({ 
-            //     token: refreshToken
-            // })
-            // await token.save();
-
-
-            // if(blackListToken.includes(refreshTokenOld))
-            //     return res.status(401).json("Refresh token was already used");
-            
-            // blackListToken.push(refreshToken);
             res.cookie("refreshToken",refreshToken,{
                 httpOnly: true,
                 secure: true,
+                // httpOnly: false, // test api
+                // secure: false,
                 sameSite:"None",
                 maxAge: 60 * 60*24 * 1000
             });

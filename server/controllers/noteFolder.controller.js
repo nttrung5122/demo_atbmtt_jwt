@@ -2,13 +2,22 @@ const Folder = require("../models/noteFolder.model");
 const User = require("../models/user.model");
 const Note = require("../models/note.model");
 const cryptoJsService = require("../services/crypto.service");
+const bcrypt = require('bcrypt');
 
 const noteFolderController = {
     createFolder:async (req,res) => {
         try {
-            const newFolder = new Folder({
+            const salt = await bcrypt.genSalt(10);
+            let password = null;
+            if(req.body?.password){
+                password = await bcrypt.hash(req.body.password,salt);
+            }
+            console.log(password);
+            const newFolder = await new Folder({
                 title: cryptoJsService.encrypt(req.body.title),
-                owner: req.user._id
+                owner: req.user._id,
+                havePassword: req.body?.password ? true : false,
+                password: password || null,
             });
 
             const folder = await newFolder.save();

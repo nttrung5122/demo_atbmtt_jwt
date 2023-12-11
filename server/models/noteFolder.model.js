@@ -9,6 +9,15 @@ const noteFolderSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
         required: true,   
+    },
+    havePassword: {
+        type: Boolean,
+        required: true,
+        default: false
+    },
+    password: {
+        type: String,
+        default: ""
     }
 },
 {timestamps:true}

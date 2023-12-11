@@ -162,42 +162,5 @@ class JWT {
   };
 }
 
-const main = () => {
-  const user = {
-    _id: { $oid: "655c253ff5ffabebf1d423e5" },
-    username: "usertest",
-    email: "usertest@gmail.com",
-    password: "$2b$10$tn8xw0IIBLUolV9NYlL5ruWa9VidbhV9W5tiB5MQ7xRP73XhVdFPC",
-    type: "user",
-    listNote: [],
-  };
-  const jwt = new JWT();
-  const accessPrivateKey = {
-    p: 162259276829213363391578010288127n,
-      q: 6864797660130609714981900799081393217269435300143305409394463459185543183397656052122559640661454554977296311391480858037121987999716643812574028291115057151n,
-      a: 460323248667026721879499876121n,
-  }
-  const accessPublicKey = jwt.calPublicKey(accessPrivateKey);
-  // console.log(token);
-  const token = jwt.sign(
-    
-			{
-				exp: Math.floor(Date.now() / 1000) + (10), //second
-				data: user
-			},
-			accessPrivateKey,
-			{
-				algorithm: "RS256"
-			}
-  )
-  jwt.verify(token,accessPublicKey,(err,payload) => {
-    if(err)
-      console.error(err);
-    else
-      console.log(payload);
-  });
-};
-
-// main();
 module.exports = new JWT();
 
