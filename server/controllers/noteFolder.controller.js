@@ -80,6 +80,61 @@ const noteFolderController = {
             res.status(500).json(error);
         }
     },
+    changePassword: async (req, res) => {
+        try {
+            const oldPassword = req.body?.oldPassword;
+            const newPassword = req.body?.newPassword;
+            // console.log(oldPassword, newPassword);
+            
+            const folder = await Folder.findById(req.params.idFolder);
+            
+            if(!folder.havePassword){
+                return res.status(401).json("1 wrong password");
+            }
+            
+            if(!oldPassword || !newPassword){
+                return res.status(401).json("2 wrong password");
+            }
+            
+            const validPassword = await bcrypt.compare( oldPassword,folder.password);
+            if(!validPassword){
+                return res.status(401).json("wrong password");
+            }
+            
+            const notes = await Note.find({
+                folder: folder._id
+            })
+            // console.log(notes);
+            for(const note of notes){
+                const newNote = await Note.findById(note._id);
+                // console.log(newNote);
+                const title = cryptoJsService.decrypt(newNote.title,oldPassword)
+                const content = cryptoJsService.decrypt(newNote.content,oldPassword)
+                // console.log(title,content);
+                const newTitle = cryptoJsService.encrypt(title,newPassword)
+                const newContent  = cryptoJsService.encrypt(content,newPassword)
+                newNote.title = newTitle;
+                newNote.content = newContent ;
+                // console.log(newTitle,newContent);
+                await newNote.save();
+                
+            }
+            console.log(1);
+
+            
+            const salt = await bcrypt.genSalt(10);
+            let password = await bcrypt.hash(req.body.newPassword,salt);
+            folder.password = password;
+            await folder.save();
+            
+            res.status(200).json(
+                "success"
+            );
+            // TODO: change password
+        } catch (error) {
+            res.status(500).json(error);
+        }
+    }
 }
 
 module.exports = noteFolderController;
