@@ -26,7 +26,7 @@ const JwtService = {
 	generate: (data) => {
 		const accessToken = jwt.sign(
 			{
-				exp: Math.floor(Date.now() / 1000) + (10*60), //second
+				exp: Math.floor(Date.now() / 1000) + (5), //second
 				data: data
 			},
 			accessPrivateKey,

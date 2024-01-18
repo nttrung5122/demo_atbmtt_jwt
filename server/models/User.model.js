@@ -24,6 +24,10 @@ const userSchema = new mongoose.Schema({
         type: String,
         default:"user"
     },
+    timeCanGetOTP:{
+        type:Date,
+        default:Date.now() 
+    },
     listNote: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: "Note"
@@ -32,7 +36,6 @@ const userSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "Note Folder"
     }]
-    
 },
 {timestamps:true}
 )

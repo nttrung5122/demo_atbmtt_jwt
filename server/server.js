@@ -13,8 +13,8 @@ module.exports = {
 		
         dotenv.config();
 
-		const urimongodb = process.env.mongoDB || "mongodb://127.0.0.1:27017";
-		// const urimongodb = "mongodb://127.0.0.1:27017";
+		// const urimongodb = process.env.mongoDB || "mongodb://127.0.0.1:27017";
+		const urimongodb = "mongodb://127.0.0.1:27017";
     
     	await mongoose.connect(urimongodb).then(()=>{
         	console.log("connect to data ",urimongodb);

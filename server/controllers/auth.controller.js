@@ -5,7 +5,7 @@ const jwt = require("jsonwebtoken");
 const jwtService = require("../services/jwt.service");
 // const RedisService = require("../services/redis.service");
 const Redis = require("ioredis");
-const client = new Redis();
+const RedisService = new Redis();
 // const blackListToken=[];
 const authController = {
 
@@ -85,7 +85,7 @@ const authController = {
                 return res.status(401).json(err);
             }
             //luu bang redis
-            const checkRefreshToken = await client.get(refreshTokenOld);
+            const checkRefreshToken = await RedisService.get(refreshTokenOld);
             // console.log(checkRefreshToken);
             if (checkRefreshToken) 
                 return res.status(401).json("Refresh token was already used");
@@ -93,8 +93,9 @@ const authController = {
             const {exp,iat, ...data} = userInfo;
             const {accessToken, refreshToken} = jwtService.generate(data);
 
-            await client.set(refreshTokenOld,"1");
-            const test = await client.get(refreshTokenOld);
+            await RedisService.set(refreshTokenOld,"1");
+            // const test = await RedisService.get(refreshTokenOld);
+            // console.log(test,1);
             res.cookie("refreshToken",refreshToken,{
                 httpOnly: true,
                 secure: true,
